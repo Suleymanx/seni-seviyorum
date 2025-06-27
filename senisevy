@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Seni Seviyorum</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+  }
+
+  #button-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+  }
+  button {
+    font-size: 1.3rem;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    background: #dc3545;
+    color: white;
+    transition: background 0.3s ease;
+  }
+  #yesBtn {
+    background: #28a745;
+  }
+  #yesBtn:hover {
+    background: #218838;
+  }
+  #noBtn:hover {
+    background: #c82333;
+  }
+
+  #header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    max-width: 90vw;
+    z-index: 10;
+  }
+  h1 {
+    font-size: 4rem;
+    margin: 0;
+    text-shadow: 0 0 15px #ff5f6d;
+  }
+  p {
+    font-size: 1.8rem;
+    margin: 0;
+  }
+
+  #finalMessage {
+    display: none;
+    font-size: 2rem;
+    text-align: center;
+    max-width: 90vw;
+    animation: fadeIn 2s ease forwards;
+    z-index: 15;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  #spotify-players {
+    position: fixed;
+    bottom: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 5;
+  }
+  iframe {
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  }
+</style>
+</head>
+<body>
+
+<div id="button-container">
+  <button id="yesBtn">Evet</button>
+  <button id="noBtn">Hayır</button>
+</div>
+
+<div id="header-container">
+  <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="30" fill="#F4C2C2" stroke="#A0522D" stroke-width="3"/>
+    <circle cx="22" cy="24" r="5" fill="#A0522D"/>
+    <circle cx="42" cy="24" r="5" fill="#A0522D"/>
+    <circle cx="22" cy="26" r="2" fill="#fff"/>
+    <circle cx="42" cy="26" r="2" fill="#fff"/>
+    <path d="M20 40 Q32 50 44 40" stroke="#A0522D" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="32" cy="38" r="3" fill="#A0522D"/>
+  </svg>
+
+  <h1>Seni Seviyorum 💖</h1>
+  <p>Sende seviyor musun?</p>
+</div>
+
+<div id="finalMessage">
+  <h2>❤️ Seni Sevdiğim İçin Çok Mutluyum! ❤️</h2>
+  <p>Seninle her şey çok daha güzel. 💕</p>
+</div>
+
+<div id="spotify-players">
+  <iframe src="https://open.spotify.com/embed/track/3VLpmvlGkGeLWME8qRShOQ" width="240" height="240" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+  <iframe src="https://open.spotify.com/embed/track/5C1xc5OFf5t6MkoH7rlvBc" width="240" height="240" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+  <iframe src="https://open.spotify.com/embed/track/5Xs9ausy71jYfKSBHjO3t0" width="240" height="240" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+  <iframe src="https://open.spotify.com/embed/track/27t7YHIlw0u1uVO302wpvD" width="240" height="240" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+</div>
+
+<script>
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+  const buttonContainer = document.getElementById('button-container');
+  const finalMessage = document.getElementById('finalMessage');
+  let attempts = 0;
+
+  noBtn.addEventListener('click', (e) => {
+    if (attempts < 15) {
+      moveNoBtnFarFromClick(e);
+      attempts++;
+    } else {
+      showFinalMessage();
+    }
+  });
+
+  yesBtn.addEventListener('click', showFinalMessage);
+
+  function moveNoBtnFarFromClick(e) {
+    const containerRect = buttonContainer.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+
+    const clickX = e.clientX - containerRect.left;
+    const clickY = e.clientY - containerRect.top;
+
+    const maxX = window.innerWidth - btnRect.width;
+    const maxY = window.innerHeight - btnRect.height;
+
+    let newX, newY;
+    let tries = 0;
+    const desiredDistance = 1000;
+
+    do {
+      newX = Math.random() * maxX;
+      newY = Math.random() * maxY;
+      const distX = newX - clickX;
+      const distY = newY - clickY;
+      const dist = Math.sqrt(distX * distX + distY * distY);
+      tries++;
+      if (dist >= desiredDistance) break;
+    } while (tries < 100);
+
+    if (tries >= 100) {
+      const corners = [
+        { x: 0, y: 0 },
+        { x: maxX, y: 0 },
+        { x: 0, y: maxY },
+        { x: maxX, y: maxY },
+      ];
+      let maxDist = 0;
+      for (const c of corners) {
+        const d = Math.sqrt((c.x - clickX) ** 2 + (c.y - clickY) ** 2);
+        if (d > maxDist) {
+          maxDist = d;
+          newX = c.x;
+          newY = c.y;
+        }
+      }
+    }
+
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+  }
+
+  function showFinalMessage() {
+    document.getElementById('header-container').style.display = 'none';
+    document.querySelector('#header-container p').style.display = 'none';
+    buttonContainer.style.display = 'none';
+
+    finalMessage.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
